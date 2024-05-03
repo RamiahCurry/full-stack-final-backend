@@ -55,6 +55,30 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Get classification
+app.get('/user/classification', async (req, res) => {
+  try {
+    const { email } = req.query; // Extract the email from the request query
+  
+    // Find the user by email
+    const user = await Product.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract the classification from the user object (replace with your actual logic)
+    const classification = user.classification;
+
+    // Send the classification back as response
+    res.status(200).json({ classification });
+  } catch (error) {
+    console.error('Error fetching user classification:', error.message);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 
 
 app.get('/products', async(req, res) => {
