@@ -78,6 +78,42 @@ app.get('/user/classification', async (req, res) => {
   }
 });
 
+app.put('/change-password/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { phoneNumber, newPassword } = req.body;
+
+    console.log('Email:', email);
+    console.log('New Password:', newPassword);
+    console.log('Phone Number:', phoneNumber);
+
+    const user = await Product.findOne({ email });
+
+    console.log('User:', user);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log('User Phone Number:', user.phoneNumber);
+
+    if (user.phoneNumber !== phoneNumber) {
+      return res.status(403).json({ message: "Phone number does not match" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    console.log('Hashed Password:', hashedPassword);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully.' });
+  } catch (error) {
+    console.error('Error changing password:', error.message);
+    res.status(500).json({ message: 'Error changing password. Please try again.' });
+  }
+});
 
 
 
